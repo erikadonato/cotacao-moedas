@@ -11,10 +11,11 @@ const Cotacao = () => {
         btc : false, 
         brl : false
     })
+
     return (
         <div className="container-cotacao">
             <h1>Cotação de moedas</h1>
-            {showResultado === true ? <ResultadoCotacao /> : <Cotar coins={coins} setCoins={setCoins} setShowResultado={setShowResultado}  />}
+            {showResultado === true ? <ResultadoCotacao coins={coins} /> : <Cotar coins={coins} setCoins={setCoins} setShowResultado={setShowResultado}  />}
         </div>
     )
 }

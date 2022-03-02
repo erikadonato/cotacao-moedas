@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { getAllCurrency } from "../../service";
+import api from "../../service/api";
+import './style.css'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -7,12 +8,12 @@ import 'react-toastify/dist/ReactToastify.css';
 const Cotar = ({ coins, setCoins, setShowResultado}) => {
     const [usd, setUsd] = useState(false)
     const [eur, setEur] = useState(false)
+    const [gbp, setGbp] = useState(false)
     const [btc, setBtc] = useState(false)
     const [brl, setBrl] = useState(false)
     const [moedaOrigem, setMoedaOrigem] = useState('USD')
     const [valorOrigem, setValorOrigem] = useState(null)
-
-    console.log(moedaOrigem)
+    const [coinsOptions, setCoinsOptions] = useState({})
 
     function handleCheck(value, setValue, type) {
         if(valorOrigem === null || valorOrigem === "") {
@@ -34,28 +35,33 @@ const Cotar = ({ coins, setCoins, setShowResultado}) => {
             }
         })
         if (count === 0) {
-            return toast.error("não é possível prosseguir sem selecionar pelo menos uma moeda")
+            return toast.error("Não é possível prosseguir sem selecionar pelo menos uma moeda")
         } else if(isNaN(valorOrigem)) {
             return toast.error("valor de origem não informado ou não é um número")
         } 
-        //else if (moedaOrigem ===  ){
-        //}
         setShowResultado(true)
     }
+
     useEffect(()=> { 
-        getAllCurrency('all/USD-BRL,EUR-BRL,GBP-BRL,BTC-BRL,LTC-BRL')
+        api.get('all/USD-BRL,EUR-BRL,GBP-BRL,BTC-BRL,LTC-BRL')
+        .then(response => setCoinsOptions(response.data))
     }, [])
-    
+
     return (
-        <div>
+        <div className="container-cotar">
         <h4>Selecione a moeda e o valor de origem:</h4>
-        <select onChange={(e) => setMoedaOrigem(e.target.value)}> 
-            <option defaultValue={'USD'}>USD</option>    
-            <option value={'EUR'}>EUR</option>
-            <option value={'BTC'}>BTC</option>
-            <option value={'BRL'}>BRL</option>
-        </select><input onChange={(e) => setValorOrigem(e.target.value)} /> <br />
+        <div className="moeda-origem">
+        <select onChange={(e) => setMoedaOrigem(e.target.value)} className="select-coin">
+           {(Object.keys(coinsOptions)).map((item, index) => {
+               return (
+                   <option value={item} key={index}>{item}</option>
+               )
+           })}
+        </select>
+        <input onChange={(e) => setValorOrigem(e.target.value)} className="input-coin-origem" /> <br />
+        </div>
         <h4>Selecione as moedas de destino</h4>
+        <div className="moedas-destino">
         <label>
         <input type="checkbox" value={usd} checked={usd} onChange={() => handleCheck(usd, setUsd, 'usd')} />
         USD
@@ -65,6 +71,10 @@ const Cotar = ({ coins, setCoins, setShowResultado}) => {
         EUR
         </label>
         <label>
+        <input type="checkbox" value={gbp} checked={gbp} onChange={() => handleCheck(gbp, setGbp, 'gbp')} />
+        GBP
+        </label>
+        <label>
         <input type="checkbox" value={btc} checked={btc} onChange={() => handleCheck(btc, setBtc, 'btc')} />
         BTC
         </label>
@@ -72,7 +82,8 @@ const Cotar = ({ coins, setCoins, setShowResultado}) => {
         <input type="checkbox" value={brl} checked={brl} onChange={() => handleCheck(brl, setBrl, 'brl')} />
         BRL
         </label>
-        <button onClick={() => handleResult()}> obter cotação</button>
+        </div>
+        <button onClick={() => handleResult()} className="button-obter-cotacao"> obter cotação</button>
         <ToastContainer
             position="top-right"
             autoClose={2500}

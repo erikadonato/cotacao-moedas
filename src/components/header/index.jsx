@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import './style.css'
-import { getData } from "./getDataRealTime";
+import { getData } from "../../utils/getDataRealTime";
 
 const Header = () => {
     const [hora, setHora ] = useState()
@@ -19,7 +19,7 @@ const Header = () => {
                 <span>Home</span>
             </div>
             <div className="documentacao-option">
-                <a target="_blank" href="htt">Documentação</a>
+                <a target="_blank" href="https://docs.awesomeapi.com.br/api-de-moedas">Documentação</a>
             </div>
             <div className="data-espaco">
                 {data.toLocaleDateString()} 
